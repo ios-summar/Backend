@@ -69,6 +69,7 @@ public class LoginController {
         user.setUserId("newy12");
         user.setUserPwd(passwordEncoder.encode("123"));
         userRepository.save(user);
+
     }
 
     //redis 연동 테스트
