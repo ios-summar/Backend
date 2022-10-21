@@ -1,17 +1,15 @@
 package com.summar.summar.domain;
 
 import com.summar.summar.dto.JoinRequestDto;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
 
+@Setter
 @Getter
-@NoArgsConstructor
-@Entity
 @Table(name = "USER")
+@Entity
 public class User extends BaseTimeEntity implements Serializable {
 
     /**
@@ -20,29 +18,17 @@ public class User extends BaseTimeEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userSeq;
+
     private String userId;
+
     private String userPwd;
+
     private String userName;
+
     private String userNickname;
+
     private String userHpNo;
-    @OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private RefreshToken refreshToken;
 
-    @Builder
-    public User(Long userSeq,String userId,String userPwd,String userName,String userNickname,String userHpNo){
-        this.userSeq = userSeq;
-        this.userId = userId;
-        this.userPwd = userPwd;
-        this.userName = userName;
-        this.userNickname = userNickname;
-        this.userHpNo = userHpNo;
-    }
-
-    public User(JoinRequestDto joinRequestDto) {
-        this.userId = joinRequestDto.getUserId();
-        this.userName = joinRequestDto.getUserName();
-        this.userNickname = joinRequestDto.getUserNickname();
-        this.userHpNo = joinRequestDto.getUserHpNo();
-        this.userPwd = joinRequestDto.getUserPwd();
-    }
 }

@@ -23,6 +23,8 @@ public enum SummarErrorCode {
     EXPIRED_PASSWORD(206, "E106", "비밀번호가 만료되었습니다."),
     USER_ALREADY_EXIST(207, "E107", "이미 존재하는 사용자입니다."),
     USER_IS_NULL(200, "E108", "회원 정보가 필요합니다."),
+    DUPLICATED_NICKNAME(202, "E109", "이미 사용 중인 닉네임입니다."),
+    DUPLICATED_USERID(202, "E110", "이미 사용 중인 아이디입니다."),
     ;
 
     private final String code;
