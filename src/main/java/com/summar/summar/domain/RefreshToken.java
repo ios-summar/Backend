@@ -1,6 +1,7 @@
 package com.summar.summar.domain;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
@@ -9,6 +10,7 @@ import java.io.Serializable;
 import java.util.UUID;
 
 @Getter
+@Setter
 @Entity
 @Table(name = "REFRESH_TOKEN")
 public class RefreshToken extends BaseTimeEntity implements Serializable {

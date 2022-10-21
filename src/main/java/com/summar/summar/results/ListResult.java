@@ -17,7 +17,7 @@ public class ListResult {
      * @param paginationInfo 페이징 정보
      * @return
      */
-    public static ResponseEntity<?> build(String resultListName, List<?> resultList, PaginationInfo paginationInfo) {
+    public static ResponseEntity<ListResult> build(String resultListName, List<ListResult> resultList, PaginationInfo paginationInfo) {
 
         ApiResult apiResult = ApiResult.blank()
                 .add("totalRecordCount", paginationInfo.getTotalRecordCount())
@@ -28,7 +28,7 @@ public class ListResult {
                 .add("recordsPerPage", paginationInfo.getPagingCriteria().getRecordsPerPage())
                 .add("pageSize", paginationInfo.getPagingCriteria().getPageSize())
                 .add(resultListName, resultList);
-        return Result.ok(new ApiResponseMessage(apiResult));
+        return (ResponseEntity<ListResult>) Result.ok(new ApiResponseMessage(apiResult));
     }
 
     /**
@@ -37,10 +37,10 @@ public class ListResult {
      * @param resultList 리스트 객체
      * @return
      */
-    public static ResponseEntity<?> build(String resultListName, List<?> resultList) {
+    public static ResponseEntity<ListResult> build(String resultListName, List<?> resultList) {
 
         ApiResult apiResult = ApiResult.blank()
                 .add(resultListName, resultList);
-        return Result.ok(new ApiResponseMessage(apiResult));
+        return (ResponseEntity<ListResult>) Result.ok(new ApiResponseMessage(apiResult));
     }
 }

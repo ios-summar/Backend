@@ -3,12 +3,16 @@ package com.summar.summar.controller;
 import com.summar.summar.auth.LoginUser;
 import com.summar.summar.auth.SummarUser;
 import com.summar.summar.common.CurrentUser;
+import com.summar.summar.common.SummarErrorCode;
+import com.summar.summar.common.SummarJwtException;
 import com.summar.summar.domain.RefreshToken;
 import com.summar.summar.domain.User;
 import com.summar.summar.dto.JoinRequestDto;
 import com.summar.summar.dto.LoginRequestDto;
 import com.summar.summar.dto.RefreshTokenRequestDto;
+import com.summar.summar.mapper.UserMapper;
 import com.summar.summar.repository.UserRepository;
+import com.summar.summar.results.ApiResult;
 import com.summar.summar.results.AuthenticationResult;
 import com.summar.summar.results.BooleanResult;
 import com.summar.summar.results.ListResult;
@@ -16,6 +20,7 @@ import com.summar.summar.service.CustomUserDetailService;
 import com.summar.summar.service.RefreshTokenService;
 import com.summar.summar.service.UserService;
 import com.summar.summar.util.JwtUtil;
+import io.undertow.util.BadRequestException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
@@ -49,15 +54,17 @@ public class UserController {
     private final UserService userService;
     private final RedisTemplate redisTemplate;
     private final RefreshTokenService refreshTokenService;
+    private final UserMapper userMapper;
 
     /**
      * 로그인
+     *
      * @param loginRequestDto
      * @return
      * @throws Exception
      */
     @PostMapping(value = "/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequestDto loginRequestDto) throws Exception {
+    public ResponseEntity<ApiResult> login(@RequestBody LoginRequestDto loginRequestDto) throws Exception {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequestDto.getUsername(),
@@ -88,7 +95,7 @@ public class UserController {
      */
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(@RequestHeader(value = "Authorization")String token){
+    public ResponseEntity<BooleanResult> logout(@RequestHeader(value = "Authorization")String token){
 
         // 레디스에 토큰 값 저장
         ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
@@ -105,7 +112,7 @@ public class UserController {
      * @return
      */
     @PostMapping("/join")
-    public ResponseEntity<?> join(@Validated @RequestBody JoinRequestDto joinRequestDto , Errors error) throws NoSuchAlgorithmException {
+    public ResponseEntity<BooleanResult> join(@Validated @RequestBody JoinRequestDto joinRequestDto , Errors error) throws NoSuchAlgorithmException {
         //벨리데이션 체크
         List<String> result = new ArrayList<>();
         if (error.hasErrors()) {
@@ -117,14 +124,14 @@ public class UserController {
             return BooleanResult.build("result",false,"message",errorList);
         }
         //유저 저장
-            Boolean saveResult = userService.saveUser(joinRequestDto);
-            if(saveResult){
-                result.add("회원가입 성공");
-                return BooleanResult.build("result", true,"message",result);
-            }else{
-                result.add("히원가입 실패");
-                return BooleanResult.build("result", false,"message",result);
-            }
+        Boolean saveResult = userService.saveUser(joinRequestDto);
+        if(saveResult){
+            result.add("회원가입 성공");
+            return BooleanResult.build("result", true,"message",result);
+        }else{
+            result.add("회원가입 실패");
+            return BooleanResult.build("result", false,"message",result);
+        }
     }
     /**
      * 토큰재발급
@@ -135,7 +142,7 @@ public class UserController {
      */
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/refreshToken")
-    public ResponseEntity<?> refreshToken(@CurrentUser SummarUser user, @RequestBody RefreshTokenRequestDto refreshTokenRequestDto) {
+    public ResponseEntity<ListResult> refreshToken(@CurrentUser SummarUser user, @RequestBody RefreshTokenRequestDto refreshTokenRequestDto) {
         //RefreshToken 객체 추출
         RefreshToken refreshTokenInfo = refreshTokenService.getRefreshTokenInfo(refreshTokenRequestDto.getRefreshTokenId());
         //RefreshToken 유효기간 체크
@@ -150,21 +157,22 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
     }
-    //redis 연동 테스트
-    @Cacheable(value = "test")
-    @GetMapping(value = "/redisadd")
-    public void redisadd(){
-        userRepository.findAll();
+
+    @GetMapping("/nicknameCheck/{nickname}")
+    public ResponseEntity<Boolean> checkNicknameDuplication(@PathVariable String nickname) throws NoSuchAlgorithmException {
+        if(nickname.isEmpty()){
+            throw new NullPointerException();
+        }
+        boolean isDuplicated = userService.checkNicknameDuplication(nickname);
+        return ResponseEntity.ok(isDuplicated);
     }
 
-    @PostMapping("/ADD")
-    public void userADD(){
-        JoinRequestDto joinRequestDto = new JoinRequestDto();
-        joinRequestDto.setUserHpNo("123");
-        joinRequestDto.setUserName("123");
-        joinRequestDto.setUserNickname("123");
-        joinRequestDto.setUserPwd("123");
-        joinRequestDto.setUserId("123");
-        userRepository.save(new User(joinRequestDto));
+    @GetMapping("/userIdCheck/{userId}")
+    public ResponseEntity<Boolean> checkUserIdDuplication(@PathVariable String userId) throws NoSuchAlgorithmException {
+        if(userId.isEmpty()){
+            throw new NullPointerException();
+        }
+        boolean isDuplicated = userService.checkUserIdDuplication(userId);
+        return ResponseEntity.ok(isDuplicated);
     }
 }
