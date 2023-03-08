@@ -193,7 +193,7 @@ public class UserController {
 
     /**
      * 푸시 알림 상태 조회
-     * @param userNickname
+     * @param userSeq
      * @return
      */
     @Operation(summary = "푸시 알림 상태 조회", description = "회원의 푸시 알림 상태 조회합니다.", security = @SecurityRequirement(name = "Authorization"))
