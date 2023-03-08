@@ -227,7 +227,6 @@ public class FeedService {
                     .forEach(feedImage -> feedImage.setActivated(false));
         }
         Feed feed = feedRepository.findOneByFeedSeq(requestDeleteFeedImagesDto.getFeedSeq());
-        feed.setActivated(false);
         return FeedDto.builder()
                 .feedSeq(feed.getFeedSeq())
                 .feedImages(feedImageRepository.findByFeedSeqAndActivatedIsTrue(feed.getFeedSeq()))
