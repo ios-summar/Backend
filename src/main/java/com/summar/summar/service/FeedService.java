@@ -74,6 +74,7 @@ public class FeedService {
     }
 
     @Transactional
+    @Cacheable(value = "feed",key = "#feedUpdateDto.feedSeq")
     public FeedDto updateFeed(FeedUpdateDto feedUpdateDto){
         Long feedSeq = feedUpdateDto.getFeedSeq();
         Feed feed = feedRepository.findOneByFeedSeq(feedSeq);
@@ -126,7 +127,7 @@ public class FeedService {
     }
 
     @Transactional(readOnly = true)
-    //@Cacheable("feed")
+    @Cacheable(value = "feed",key = "#page")
     public Page<FeedDto> getFeed(Pageable page) {
         Page<Feed> feeds = feedRepository.findAllByActivatedIsTrueAndSecretYnIsFalseAndTempSaveYnIsFalseAndUserLeaveYnIsFalse(page);
         List<FeedDto> feedDtos = new ArrayList<>();
