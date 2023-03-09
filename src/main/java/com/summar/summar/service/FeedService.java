@@ -392,6 +392,7 @@ public class FeedService {
         feedComment.setComment(feedCommentUpdateDto.getComment());
     }
 
+    @Cacheable(value = "feed",key = "#page")
     @Transactional(readOnly = true)
     public Page<FeedDto> getFeedScrap(Pageable page) {
         Long userSeq = jwtUtil.getCurrentUserSeq();
