@@ -74,7 +74,7 @@ public class FeedService {
     }
 
     @Transactional
-    @Cacheable(value = "feed",key = "#feedUpdateDto.feedSeq")
+    //@Cacheable(value = "feed",key = "#feedUpdateDto.feedSeq")
     public FeedDto updateFeed(FeedUpdateDto feedUpdateDto){
         Long feedSeq = feedUpdateDto.getFeedSeq();
         Feed feed = feedRepository.findOneByFeedSeq(feedSeq);
@@ -127,7 +127,7 @@ public class FeedService {
     }
 
     @Transactional(readOnly = true)
-    @Cacheable(value = "feed",key = "#page")
+    //@Cacheable(value = "feed",key = "#page")
     public Page<FeedDto> getFeed(Pageable page) {
         Page<Feed> feeds = feedRepository.findAllByActivatedIsTrueAndSecretYnIsFalseAndTempSaveYnIsFalseAndUserLeaveYnIsFalse(page);
         List<FeedDto> feedDtos = new ArrayList<>();
@@ -392,7 +392,7 @@ public class FeedService {
         feedComment.setComment(feedCommentUpdateDto.getComment());
     }
 
-    @Cacheable(value = "feed",key = "#page")
+    //@Cacheable(value = "feed",key = "#page")
     @Transactional(readOnly = true)
     public Page<FeedDto> getFeedScrap(Pageable page) {
         Long userSeq = jwtUtil.getCurrentUserSeq();
