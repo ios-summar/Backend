@@ -126,7 +126,7 @@ public class FeedService {
     }
 
     @Transactional(readOnly = true)
-    @Cacheable("feed")
+    //@Cacheable("feed")
     public Page<FeedDto> getFeed(Pageable page) {
         Page<Feed> feeds = feedRepository.findAllByActivatedIsTrueAndSecretYnIsFalseAndTempSaveYnIsFalseAndUserLeaveYnIsFalse(page);
         List<FeedDto> feedDtos = new ArrayList<>();
