@@ -9,10 +9,11 @@ import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
-public class GatheringNotificationResponseDto {
+public class GatheringNotificationResponseDto implements Serializable {
 
     private Long gatheringNotificationSeq;
     //내용

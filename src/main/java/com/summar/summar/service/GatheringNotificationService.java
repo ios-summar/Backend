@@ -12,12 +12,11 @@ import com.summar.summar.repository.GatheringNotificationRepository;
 import com.summar.summar.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,6 +32,7 @@ public class GatheringNotificationService {
 
 
     @Transactional(readOnly = true)
+    @Cacheable("gatheringInfo")
     public List<GatheringNotificationResponseDto> findByNotificationList(Long userSeq) {
         User userInfo = userRepository.findById(userSeq).orElseThrow(() -> new SummarCommonException(SummarErrorCode.USER_NOT_FOUND.getCode(), SummarErrorCode.USER_NOT_FOUND.getMessage()));
         List<GatheringNotification> gatheringNotificationList = gatheringNotificationRepository.findAllByUserSeqAndOtherUserSeqLeaveYnIsFalseOrderByGatheringNotificationSeqDesc(userInfo);

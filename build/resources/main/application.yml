@@ -26,14 +26,9 @@ spring:
         format_sql: false
     open-in-view: false
   redis:
-    lettuce:
-      pool:
-        max-active: 10
-        max-idle: 10
-        min-idle: 2
     host: 3.39.68.127
     port: 6379
-    password: summarredis
+    password: summar
 springdoc:
   swagger-ui:
     path: /summar-api-doc.html

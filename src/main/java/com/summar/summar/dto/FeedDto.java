@@ -10,6 +10,7 @@ import org.hibernate.annotations.Type;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -22,7 +23,7 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
-public class FeedDto {
+public class FeedDto implements Serializable {
 
 
     @Schema(description = "피드 시퀀스")

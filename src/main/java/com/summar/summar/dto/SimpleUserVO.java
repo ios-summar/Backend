@@ -5,8 +5,10 @@ import com.summar.summar.domain.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
-public class SimpleUserVO {
+public class SimpleUserVO implements Serializable {
     @Schema(description = "유저 시퀀스")
     private Long userSeq;
     @Schema(description = "유저 이메일")
