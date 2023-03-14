@@ -18,5 +18,5 @@ public interface GatheringNotificationRepository extends JpaRepository<Gathering
 
     List<GatheringNotification> findAllByFeed(Feed feed);
 
-    List<GatheringNotification> findAllByUserSeqAndOtherUserSeqLeaveYnIsFalseAndDelYnIsTrueOrderByGatheringNotificationSeqDesc(User userInfo);
+    List<GatheringNotification> findAllByUserSeqAndOtherUserSeqLeaveYnIsFalseAndDelYnIsFalseOrderByGatheringNotificationSeqDesc(User userInfo);
 }

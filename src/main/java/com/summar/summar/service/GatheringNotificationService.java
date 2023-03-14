@@ -38,7 +38,7 @@ public class GatheringNotificationService {
     //@Cacheable(value = "gatheringInfo",key = "#userSeq")
     public List<GatheringNotificationResponseDto> findByNotificationList(Long userSeq) {
         User userInfo = userRepository.findById(userSeq).orElseThrow(() -> new SummarCommonException(SummarErrorCode.USER_NOT_FOUND.getCode(), SummarErrorCode.USER_NOT_FOUND.getMessage()));
-        List<GatheringNotification> gatheringNotificationList = gatheringNotificationRepository.findAllByUserSeqAndOtherUserSeqLeaveYnIsFalseAndDelYnIsTrueOrderByGatheringNotificationSeqDesc(userInfo);
+        List<GatheringNotification> gatheringNotificationList = gatheringNotificationRepository.findAllByUserSeqAndOtherUserSeqLeaveYnIsFalseAndDelYnIsFalseOrderByGatheringNotificationSeqDesc(userInfo);
         gatheringNotificationList.forEach(gather -> {
             User user = gather.getUserSeq();
             User otherUser = gather.getOtherUserSeq();
