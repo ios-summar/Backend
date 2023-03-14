@@ -14,6 +14,7 @@ import com.summar.summar.repository.UserRepository;
 import com.summar.summar.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -102,6 +103,7 @@ public class UserService {
     }
 
     @Transactional
+    @CacheEvict(value = "feed",allEntries = true)
     public TokenResponseDto loginFlow(LoginRequestDto loginRequestDto) throws Exception {
 
         //nickname 또는 major 1 또는 major 2 가 비어있으면 회원가입
