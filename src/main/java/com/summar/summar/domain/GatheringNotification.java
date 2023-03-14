@@ -38,11 +38,15 @@ public class GatheringNotification extends BaseTimeEntity{
     //팔로우 체크
     private Boolean followCheck = false;
 
+    //삭제된 게시물 판단유무
+    private Boolean delYn = false;
+
     public void setFollowCheck(Boolean followCheck){
         this.followCheck = followCheck;
     }
-
-
+    public void setDelYn(Boolean delYn){
+        this.delYn = delYn;
+    }
 
     @Enumerated(EnumType.STRING)
     private NotificationType notificationType;

@@ -211,6 +211,12 @@ public class FeedService {
     public FeedDto updateFeedInActivated(Long feedSeq) {
         Feed feed = feedRepository.findOneByFeedSeq(feedSeq);
         feed.setActivated(false);
+
+        List<GatheringNotification> gatheringNotificationList = gatheringNotificationRepository.findAllByFeed(feed);
+        gatheringNotificationList.forEach(gathering -> {
+            gathering.setDelYn(true);
+            gatheringNotificationRepository.save(gathering);
+        });
         return FeedDto.builder()
                 .feedSeq(feedSeq)
                 .feedImages(feedImageRepository.findByFeedSeqAndActivatedIsTrue(feedSeq))
@@ -275,6 +281,7 @@ public class FeedService {
                                             .notificationType(NotificationType.좋아요)
                                             .feed(feed)
                                             .feedComment(null)
+                                            .delYn(false)
                                             .build());
                             gatheringNotificationRepository.save(gatheringNotification);
                             pushService.pushNotification(pushNotificationDto);
@@ -306,6 +313,7 @@ public class FeedService {
                                         .notificationType(NotificationType.좋아요)
                                         .feed(feed)
                                         .feedComment(null)
+                                        .delYn(false)
                                         .build());
                         gatheringNotificationRepository.save(gatheringNotification);
                         pushService.pushNotification(pushNotificationDto);
@@ -377,6 +385,7 @@ public class FeedService {
                             .notificationType(NotificationType.댓글)
                             .feed(feed)
                             .feedComment(feedComment)
+                            .delYn(false)
                             .build());
             gatheringNotificationRepository.save(gatheringNotification);
         }

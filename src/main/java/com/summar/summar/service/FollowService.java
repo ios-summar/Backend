@@ -120,6 +120,7 @@ public class FollowService {
                             .userSeq(followedUser)
                             .otherUserSeq(followingUser)
                             .notificationType(NotificationType.팔로우)
+                            .delYn(false)
                             .build());
             gatheringNotificationRepository.save(gatheringNotification);
         } else {

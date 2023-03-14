@@ -21,5 +21,6 @@ public class GatheringNotificationSaveDto {
     private FeedComment feedComment;
     //알림타입
     private NotificationType notificationType;
+    private Boolean delYn;
 
 }

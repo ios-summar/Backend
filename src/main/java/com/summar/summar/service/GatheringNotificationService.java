@@ -3,10 +3,12 @@ package com.summar.summar.service;
 
 import com.summar.summar.common.SummarCommonException;
 import com.summar.summar.common.SummarErrorCode;
+import com.summar.summar.domain.Feed;
 import com.summar.summar.domain.Follow;
 import com.summar.summar.domain.GatheringNotification;
 import com.summar.summar.domain.User;
 import com.summar.summar.dto.GatheringNotificationResponseDto;
+import com.summar.summar.repository.FeedRepository;
 import com.summar.summar.repository.FollowRepository;
 import com.summar.summar.repository.GatheringNotificationRepository;
 import com.summar.summar.repository.UserRepository;
@@ -29,13 +31,14 @@ public class GatheringNotificationService {
     private final UserRepository userRepository;
 
     private final FollowRepository followRepository;
+    private final FeedRepository feedRepository;
 
 
     @Transactional(readOnly = true)
     //@Cacheable(value = "gatheringInfo",key = "#userSeq")
     public List<GatheringNotificationResponseDto> findByNotificationList(Long userSeq) {
         User userInfo = userRepository.findById(userSeq).orElseThrow(() -> new SummarCommonException(SummarErrorCode.USER_NOT_FOUND.getCode(), SummarErrorCode.USER_NOT_FOUND.getMessage()));
-        List<GatheringNotification> gatheringNotificationList = gatheringNotificationRepository.findAllByUserSeqAndOtherUserSeqLeaveYnIsFalseOrderByGatheringNotificationSeqDesc(userInfo);
+        List<GatheringNotification> gatheringNotificationList = gatheringNotificationRepository.findAllByUserSeqAndOtherUserSeqLeaveYnIsFalseAndDelYnIsTrueOrderByGatheringNotificationSeqDesc(userInfo);
         gatheringNotificationList.forEach(gather -> {
             User user = gather.getUserSeq();
             User otherUser = gather.getOtherUserSeq();
