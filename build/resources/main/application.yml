@@ -29,6 +29,7 @@ spring:
     host: 3.39.68.127
     port: 6379
     password: summar
+    timeout: 6
 springdoc:
   swagger-ui:
     path: /summar-api-doc.html

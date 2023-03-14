@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -48,6 +49,7 @@ public class FeedService {
     private final JwtUtil jwtUtil;
 
     @Transactional
+    @CacheEvict(value = "feed",allEntries = true)
     public FeedDto saveFeed(FeedRegisterDto feedRegisterDto) {
         User user = userRepository.findById(feedRegisterDto.getUserSeq()).get();
         Feed feed = new Feed(feedRegisterDto,user);
@@ -74,7 +76,7 @@ public class FeedService {
     }
 
     @Transactional
-    //@Cacheable(value = "feed",key = "#feedUpdateDto.feedSeq")
+    @CacheEvict(value = "feed",allEntries = true)
     public FeedDto updateFeed(FeedUpdateDto feedUpdateDto){
         Long feedSeq = feedUpdateDto.getFeedSeq();
         Feed feed = feedRepository.findOneByFeedSeq(feedSeq);
@@ -127,7 +129,6 @@ public class FeedService {
     }
 
     @Transactional(readOnly = true)
-    //@Cacheable(value = "feed",key = "#page")
     public Page<FeedDto> getFeed(Pageable page) {
         Page<Feed> feeds = feedRepository.findAllByActivatedIsTrueAndSecretYnIsFalseAndTempSaveYnIsFalseAndUserLeaveYnIsFalse(page);
         List<FeedDto> feedDtos = new ArrayList<>();
@@ -205,6 +206,7 @@ public class FeedService {
     }
 
     @Transactional
+    @CacheEvict(value = "feed",allEntries = true)
     public FeedDto updateFeedInActivated(Long feedSeq) {
         Feed feed = feedRepository.findOneByFeedSeq(feedSeq);
         feed.setActivated(false);
@@ -223,6 +225,7 @@ public class FeedService {
     }
 
     @Transactional
+    @CacheEvict(value = "feed",allEntries = true)
     public FeedDto deleteFeedImages(RequestDeleteFeedImagesDto requestDeleteFeedImagesDto) {
 
         if(requestDeleteFeedImagesDto.getImageSeqs()!=null){
@@ -245,6 +248,7 @@ public class FeedService {
     }
 
     @Transactional
+    @CacheEvict(value = "feed",allEntries = true)
     public Boolean setFeedLike(Long feedSeq, FeedLikeDto feedLikeDto){
 
         Optional<FeedLike> feedLike =feedLikeRepository.findByFeedFeedSeqAndUserUserSeq(feedSeq, feedLikeDto.getUserSeq());
@@ -342,6 +346,7 @@ public class FeedService {
     }
 
     @Transactional
+    @CacheEvict(value = "feed",allEntries = true)
     public void saveFeedComment(FeedCommentRegisterDto feedCommentRegisterDto) {
         User user = userRepository.findById(feedCommentRegisterDto.getUserSeq()).get();
         Feed feed = feedRepository.findOneByFeedSeq(feedCommentRegisterDto.getFeedSeq());
@@ -378,6 +383,7 @@ public class FeedService {
     }
 
     @Transactional
+    @CacheEvict(value = "feed",allEntries = true)
     public void updateFeedCommentInActivated(Long feedCommentSeq) {
         FeedComment feedComment = feedCommentRepository.findOneByFeedCommentSeq(feedCommentSeq);
         feedComment.setActivated(false);
@@ -387,6 +393,7 @@ public class FeedService {
     }
 
     @Transactional
+    @CacheEvict(value = "feed",allEntries = true)
     public void updateFeedComment(FeedCommentUpdateDto feedCommentUpdateDto) {
         FeedComment feedComment = feedCommentRepository.findOneByFeedCommentSeq(feedCommentUpdateDto.getFeedCommentSeq());
         feedComment.setComment(feedCommentUpdateDto.getComment());
@@ -421,6 +428,7 @@ public class FeedService {
     }
 
     @Transactional
+    @CacheEvict(value = "feed",allEntries = true)
     public Boolean setFeedScrap(Long feedSeq, FeedScrapDto feedScrapDto){
         Optional<FeedScrap> feedScrap =feedScrapRepository.findByFeedFeedSeqAndUserUserSeq(feedSeq, feedScrapDto.getUserSeq());
         feedScrap.ifPresentOrElse(

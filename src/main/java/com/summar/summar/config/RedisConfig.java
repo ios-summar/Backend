@@ -22,6 +22,8 @@ public class RedisConfig {
     private int port;
     @Value("${spring.redis.password}")
     private String password;
+    @Value("${spring.redis.timeout}")
+    private Long timeout;
 
 
     @Bean
@@ -30,6 +32,7 @@ public class RedisConfig {
         redisStandaloneConfiguration.setHostName(host);
         redisStandaloneConfiguration.setPort(port);
         redisStandaloneConfiguration.setPassword(password);
+
         return new LettuceConnectionFactory(redisStandaloneConfiguration);
     }
 

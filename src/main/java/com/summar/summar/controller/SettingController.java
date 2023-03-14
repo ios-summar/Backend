@@ -1,5 +1,6 @@
 package com.summar.summar.controller;
 
+import com.summar.summar.domain.Setting;
 import com.summar.summar.enumeration.SettingType;
 import com.summar.summar.repository.SettingRepository;
 import com.summar.summar.results.ListResult;
@@ -14,10 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.webjars.NotFoundException;
 
 @RestController
@@ -50,7 +48,16 @@ public class SettingController {
         else{
             throw new NotFoundException("없는 타입입니다.");
         }
-
+    }
+    @PostMapping("")
+    public void test(){
+        Setting setting = Setting.builder()
+                .content("안녕하세요. 써머 회원님들 드디어 써머가 정식 오픈 합니다.")
+                .settingType(SettingType.NOTICE)
+                .status("new")
+                .title("공지사항")
+                .build();
+        settingRepository.save(setting);
     }
 
 }
