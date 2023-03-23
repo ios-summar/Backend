@@ -275,6 +275,7 @@ public class UserService {
     }
 
     @Transactional
+    @CacheEvict(value = "feed",allEntries = true)
     public boolean blockUser(Long blockedUserSeq) {
         Optional<User> user = userRepository.findById(jwtUtil.getCurrentUserSeq());
         if (user.isPresent()) {
