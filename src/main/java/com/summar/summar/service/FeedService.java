@@ -42,6 +42,8 @@ public class FeedService {
     private final GatheringNotificationRepository gatheringNotificationRepository;
     private final UserRepository userRepository;
 
+    private final UserBlockRepository userBlockRepository;
+
     private final S3Service s3Service;
 
     private final PushService pushService;
@@ -131,7 +133,9 @@ public class FeedService {
     @Transactional(readOnly = true)
     @Cacheable(value = "feed",key = "#page")
     public Page<FeedDto> getFeed(Pageable page) {
-        Page<Feed> feeds = feedRepository.findAllByActivatedIsTrueAndSecretYnIsFalseAndTempSaveYnIsFalseAndUserLeaveYnIsFalse(page);
+        Optional<List<UserBlock>> blockedUsers = userBlockRepository.findByUserUserSeq(jwtUtil.getCurrentUserSeq());
+        List<Long> blockedUserSeqs = blockedUsers.get().stream().map(userBlock -> userBlock.getBlockedUser().getUserSeq()).collect(Collectors.toList());
+        Page<Feed> feeds = feedRepository.findAllByActivatedIsTrueAndSecretYnIsFalseAndTempSaveYnIsFalseAndUserLeaveYnIsFalseAndUserUserSeqNotIn(page,blockedUserSeqs);
         List<FeedDto> feedDtos = new ArrayList<>();
         feeds.forEach(
                 feed -> feedDtos.add(FeedDto.builder()
@@ -327,7 +331,9 @@ public class FeedService {
 
     @Transactional(readOnly = true)
     public Page<FeedCommentDto> getFeedCommentsByFeedSeq(Pageable page, Long feedSeq) {
-        Page<FeedComment> feedComments = feedCommentRepository.findAllByFeedFeedSeq(feedSeq,page);
+        Optional<List<UserBlock>> blockedUsers = userBlockRepository.findByUserUserSeq(jwtUtil.getCurrentUserSeq());
+        List<Long> blockedUserSeqs = blockedUsers.get().stream().map(userBlock -> userBlock.getBlockedUser().getUserSeq()).collect(Collectors.toList());
+        Page<FeedComment> feedComments = feedCommentRepository.findAllByFeedFeedSeqAndUserUserSeqNotIn(feedSeq,page,blockedUserSeqs);
         List<FeedCommentDto> feedCommentDtos = new ArrayList<>();
         List<FeedComment> parentComments = feedComments.stream().filter(feedComment1 -> feedComment1.getParentCommentSeq().equals(0L))
                 .collect(Collectors.toList());

@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public interface FeedCommentRepository extends JpaRepository<FeedComment, Long> {
 
-    Page<FeedComment> findAllByFeedFeedSeq(Long feedSeq, Pageable page);
+    Page<FeedComment> findAllByFeedFeedSeqAndUserUserSeqNotIn(Long feedSeq, Pageable page,List<Long> blockedUserSeqs);
     List<FeedComment> findAllByFeedFeedSeq(Long feedSeq);
     List<FeedComment> findTop3ByFeedFeedSeq(Long feedSeq);
     FeedComment findOneByFeedCommentSeq(Long feedCommentSeq);
