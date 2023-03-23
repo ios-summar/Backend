@@ -97,6 +97,16 @@ public class User extends BaseTimeEntity implements Serializable {
 
     @OneToMany(mappedBy = "otherUser",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     private List<Report> reportsOfOtherUsers = new ArrayList<>();
+
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<UserBlock> userList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "blockedUser", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<UserBlock> blockedUserList = new ArrayList<>();
+
     @Builder
     public User(Long userSeq, String userEmail, String userNickname) {
         this.userSeq = userSeq;

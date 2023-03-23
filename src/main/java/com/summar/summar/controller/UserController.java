@@ -65,7 +65,6 @@ public class UserController {
         return ObjectResult.ok();
     }
 
-
     /**
      * 리프레시 토큰으로 엑세스 토큰 재발급
      *
@@ -205,5 +204,17 @@ public class UserController {
     @GetMapping("/push-notification-info")
     public ResponseEntity<?> pushNotificationInfo(@RequestParam(value = "userSeq")Long userSeq){
       return ObjectResult.build("result",userService.userPushStatusInfo(userSeq));
+    }
+
+    /**
+     * 회원 차단
+     * @param blockedUserSeq
+     * @return
+     */
+    @Operation(summary = "회원 차단", description = "회원이 차단됩니다.", security = @SecurityRequirement(name = "Authorization"))
+    @PreAuthorize("isAuthenticated()")
+    @PatchMapping("/block/{blockedUserSeq}")
+    public ResponseEntity<Boolean> block(@PathVariable(value = "blockedUserSeq")Long blockedUserSeq){
+        return ResponseEntity.ok(userService.blockUser(blockedUserSeq));
     }
 }

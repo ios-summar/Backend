@@ -24,7 +24,7 @@ public class FeedScrap extends BaseTimeEntity implements Serializable {
     @JsonIgnoreProperties(value = { "feedScraps" }, allowSetters = true)
     private Feed feed;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name="user_seq", referencedColumnName = "user_seq")
     @JsonIgnoreProperties(value = { "feedScraps" }, allowSetters = true)
     private User user;
