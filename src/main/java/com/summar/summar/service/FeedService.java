@@ -133,9 +133,14 @@ public class FeedService {
     @Transactional(readOnly = true)
     @Cacheable(value = "feed",key = "#page")
     public Page<FeedDto> getFeed(Pageable page) {
+        Page<Feed> feeds;
         Optional<List<UserBlock>> blockedUsers = userBlockRepository.findByUserUserSeq(jwtUtil.getCurrentUserSeq());
-        List<Long> blockedUserSeqs = blockedUsers.get().stream().map(userBlock -> userBlock.getBlockedUser().getUserSeq()).collect(Collectors.toList());
-        Page<Feed> feeds = feedRepository.findAllByActivatedIsTrueAndSecretYnIsFalseAndTempSaveYnIsFalseAndUserLeaveYnIsFalseAndUserUserSeqNotIn(page,blockedUserSeqs);
+        if(blockedUsers.get().size()>0){
+            List<User> users = blockedUsers.get().stream().map(UserBlock::getBlockedUser).collect(Collectors.toList());
+            feeds = feedRepository.findAllByActivatedIsTrueAndSecretYnIsFalseAndTempSaveYnIsFalseAndUserLeaveYnIsFalseAndUserNotIn(page,users);
+        }else{
+            feeds = feedRepository.findAllByActivatedIsTrueAndSecretYnIsFalseAndTempSaveYnIsFalseAndUserLeaveYnIsFalse(page);
+        }
         List<FeedDto> feedDtos = new ArrayList<>();
         feeds.forEach(
                 feed -> feedDtos.add(FeedDto.builder()
@@ -331,9 +336,15 @@ public class FeedService {
 
     @Transactional(readOnly = true)
     public Page<FeedCommentDto> getFeedCommentsByFeedSeq(Pageable page, Long feedSeq) {
+        Page<FeedComment> feedComments;
         Optional<List<UserBlock>> blockedUsers = userBlockRepository.findByUserUserSeq(jwtUtil.getCurrentUserSeq());
-        List<Long> blockedUserSeqs = blockedUsers.get().stream().map(userBlock -> userBlock.getBlockedUser().getUserSeq()).collect(Collectors.toList());
-        Page<FeedComment> feedComments = feedCommentRepository.findAllByFeedFeedSeqAndUserUserSeqNotIn(feedSeq,page,blockedUserSeqs);
+        if(blockedUsers.get().size()>0){
+            List<User> users = blockedUsers.get().stream().map(UserBlock::getBlockedUser).collect(Collectors.toList());
+            feedComments = feedCommentRepository.findAllByFeedFeedSeqAndUserNotIn(feedSeq,page,users);
+        }else{
+            feedComments = feedCommentRepository.findAllByFeedFeedSeq(feedSeq,page);
+        }
+
         List<FeedCommentDto> feedCommentDtos = new ArrayList<>();
         List<FeedComment> parentComments = feedComments.stream().filter(feedComment1 -> feedComment1.getParentCommentSeq().equals(0L))
                 .collect(Collectors.toList());
