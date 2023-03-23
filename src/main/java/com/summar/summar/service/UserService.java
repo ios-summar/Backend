@@ -288,4 +288,17 @@ public class UserService {
             return false;
         }
     }
+
+    @Transactional(readOnly = true)
+    public List<UserBlockDTO> getBlockedUserList() {
+        List<UserBlockDTO> userBlockDTOList = new ArrayList<>();
+        Optional<User> user = userRepository.findById(jwtUtil.getCurrentUserSeq());
+        if (user.isPresent()) {
+           Optional<List<UserBlock>> userBlockList = userBlockRepository.findByUserUserSeq(user.get().getUserSeq());
+            userBlockList.ifPresent(userBlocks -> userBlocks.forEach(
+                    userBlock -> userBlockDTOList.add(new UserBlockDTO(userBlock.getBlockedUser()))
+            ));
+        }
+        return userBlockDTOList;
+    }
 }

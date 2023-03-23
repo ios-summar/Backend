@@ -1,6 +1,7 @@
 package com.summar.summar.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.summar.summar.dto.UserBlockDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
