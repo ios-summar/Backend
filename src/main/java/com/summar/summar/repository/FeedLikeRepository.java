@@ -12,4 +12,6 @@ public interface FeedLikeRepository extends JpaRepository<FeedLike, Long> {
     boolean existsByActivatedIsTrueAndFeedFeedSeqAndUserUserSeq(Long feedSeq, Long userSeq);
 
     Optional<List<FeedLike>> findByFeedFeedSeqAndActivatedIsTrue(Long feedSeq);
+
+    Optional<List<FeedLike>> findByUserUserSeqAndActivatedIsTrueAndFeedActivatedIsTrueAndFeedUserUserSeq(Long userSeq, Long blockedUserSeq);
 }

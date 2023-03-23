@@ -7,6 +7,7 @@ import com.summar.summar.enumeration.NotificationType;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface GatheringNotificationRepository extends JpaRepository<GatheringNotification,Long> {
 
@@ -15,6 +16,8 @@ public interface GatheringNotificationRepository extends JpaRepository<Gathering
     int deleteAllByUserSeqUserSeqAndOtherUserSeqUserSeqAndNotificationTypeAndFeedFeedSeq(Long userSeq,Long otherUserSeq,NotificationType notificationType, Long feedSeq);
 
     int deleteAllByFeedCommentFeedCommentSeqAndNotificationType(Long feedCommentSeq,NotificationType notificationType);
+
+    Optional<List<GatheringNotification>> findByUserSeqUserSeqAndOtherUserSeqUserSeq(Long userSeq, Long otherUserSeq);
 
     List<GatheringNotification> findAllByFeed(Feed feed);
 

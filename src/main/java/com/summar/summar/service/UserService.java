@@ -2,10 +2,7 @@ package com.summar.summar.service;
 
 import com.summar.summar.common.SummarCommonException;
 import com.summar.summar.common.SummarErrorCode;
-import com.summar.summar.domain.Follow;
-import com.summar.summar.domain.RefreshToken;
-import com.summar.summar.domain.User;
-import com.summar.summar.domain.UserBlock;
+import com.summar.summar.domain.*;
 import com.summar.summar.dto.*;
 import com.summar.summar.repository.*;
 import com.summar.summar.util.JwtUtil;
@@ -22,6 +19,7 @@ import org.springframework.util.ObjectUtils;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -32,6 +30,9 @@ public class UserService {
     private final FollowRepository followRepository;
     private final GatheringNotificationRepository gatheringNotificationRepository;
     private final UserBlockRepository userBlockRepository;
+    private final FeedScrapRepository feedScrapRepository;
+    private final FeedLikeRepository feedLikeRepository;
+    private final FeedCommentRepository feedCommentRepository;
     private final JwtUtil jwtUtil;
     private final S3Service s3Service;
 
@@ -163,9 +164,12 @@ public class UserService {
     @Transactional(readOnly = true)
     public Page<SearchUserListResponseDto> searchUserList(String userNickname, Pageable pageable) {
         //닉네임 검색 완성했을 때
+        Optional<List<UserBlock>> blockedUsers = userBlockRepository.findByUserUserSeq(jwtUtil.getCurrentUserSeq());
+        List<Long> blockedUserSeqs = blockedUsers.get().stream().map(userBlock -> userBlock.getBlockedUser().getUserSeq()).collect(Collectors.toList());
         boolean searchUserListCheck = userRepository.existsByUserNicknameContainsAndLeaveYn(userNickname, false);
         if (searchUserListCheck) {
-            Page<User> searchUserList = userRepository.findByUserNicknameContainsAndLeaveYn(userNickname, false, pageable);
+
+            Page<User> searchUserList = userRepository.findByUserNicknameContainsAndLeaveYnAndUserSeqNotIn(userNickname, false, pageable,blockedUserSeqs);
             return searchUserList.map(SearchUserListResponseDto::new);
         }
         List<String> index_list = new ArrayList<>();
@@ -208,7 +212,7 @@ public class UserService {
                 break;
             }
         }
-        Page<User> users = userRepository.searchWord(index_map.get(num), index_map.get(num + 1), pageable);
+        Page<User> users = userRepository.searchWord(index_map.get(num), index_map.get(num + 1), pageable,blockedUserSeqs);
         return users.map(SearchUserListResponseDto::new);
     }
 
@@ -280,7 +284,73 @@ public class UserService {
                         .ifPresentOrElse(
                                 userBlockRepository::delete
                                 ,
-                                () -> userBlockRepository.save(new UserBlock(user.get(), block))
+                                () -> {
+                                    userBlockRepository.save(new UserBlock(user.get(), block));
+                                    followRepository.findByFollowedUserAndFollowingUserAndFollowYn(block,user.get(),true)
+                                            .ifPresent(
+                                                    follow -> {
+                                                        followRepository.delete(follow);
+                                                        user.get().setFollowing(user.get().getFollowing()-1);
+                                                        block.setFollower(block.getFollower()-1);
+                                                    }
+                                            );
+                                    followRepository.findByFollowedUserAndFollowingUserAndFollowYn(user.get(),block,true)
+                                            .ifPresent(
+                                                    follow -> {
+                                                        followRepository.delete(follow);
+                                                        block.setFollowing(block.getFollowing()-1);
+                                                        user.get().setFollower(user.get().getFollower()-1);
+                                                    }
+                                            );
+                                    gatheringNotificationRepository.findByUserSeqUserSeqAndOtherUserSeqUserSeq(user.get().getUserSeq(),block.getUserSeq())
+                                            .ifPresent(
+                                                    gatheringNotifications -> gatheringNotifications.forEach(
+                                                            gatheringNotification -> gatheringNotification.setDelYn(true)
+                                                    )
+                                            );
+                                    gatheringNotificationRepository.findByUserSeqUserSeqAndOtherUserSeqUserSeq(block.getUserSeq(),user.get().getUserSeq()).ifPresent(
+                                            gatheringNotifications -> gatheringNotifications.forEach(
+                                                    gatheringNotification -> gatheringNotification.setDelYn(true)
+                                            )
+                                    );
+                                    feedScrapRepository.findByUserUserSeqAndActivatedIsTrueAndFeedActivatedIsTrueAndFeedUserUserSeq(user.get().getUserSeq(), block.getUserSeq())
+                                            .ifPresent(
+                                                    feedScraps -> feedScraps.forEach(
+                                                            feedScrap -> feedScrap.setActivated(false)
+                                                    )
+                                            );
+                                    feedScrapRepository.findByUserUserSeqAndActivatedIsTrueAndFeedActivatedIsTrueAndFeedUserUserSeq(block.getUserSeq(),user.get().getUserSeq())
+                                            .ifPresent(
+                                                    feedScraps -> feedScraps.forEach(
+                                                            feedScrap -> feedScrap.setActivated(false)
+                                                    )
+                                            );
+
+                                    feedLikeRepository.findByUserUserSeqAndActivatedIsTrueAndFeedActivatedIsTrueAndFeedUserUserSeq(user.get().getUserSeq(), block.getUserSeq())
+                                            .ifPresent(
+                                                    feedLikes -> feedLikes.forEach(
+                                                            feedLike -> feedLike.setActivated(false)
+                                                    )
+                                            );
+                                    feedLikeRepository.findByUserUserSeqAndActivatedIsTrueAndFeedActivatedIsTrueAndFeedUserUserSeq(block.getUserSeq(),user.get().getUserSeq())
+                                            .ifPresent(
+                                                    feedLikes -> feedLikes.forEach(
+                                                            feedLike -> feedLike.setActivated(false)
+                                                    )
+                                            );
+                                    feedCommentRepository.findByUserUserSeqAndActivatedIsTrueAndFeedActivatedIsTrueAndFeedUserUserSeq(block.getUserSeq(),user.get().getUserSeq())
+                                            .ifPresent(
+                                                    feedComments -> feedComments.forEach(
+                                                            feedComment -> feedComment.setActivated(false)
+                                                    )
+                                            );
+                                    feedCommentRepository.findByUserUserSeqAndActivatedIsTrueAndFeedActivatedIsTrueAndFeedUserUserSeq(user.get().getUserSeq(),block.getUserSeq())
+                                            .ifPresent(
+                                                    feedComments -> feedComments.forEach(
+                                                            feedComment -> feedComment.setActivated(false)
+                                                    )
+                                            );
+                                }
                         );
             });
             return true;

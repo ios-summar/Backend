@@ -107,6 +107,14 @@ public class User extends BaseTimeEntity implements Serializable {
     @JsonManagedReference
     private List<UserBlock> blockedUserList = new ArrayList<>();
 
+    public void setFollower(Integer follower) {
+        this.follower = follower;
+    }
+
+    public void setFollowing(Integer following) {
+        this.following = following;
+    }
+
     @Builder
     public User(Long userSeq, String userEmail, String userNickname) {
         this.userSeq = userSeq;

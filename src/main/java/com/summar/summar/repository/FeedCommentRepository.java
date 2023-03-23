@@ -14,5 +14,6 @@ public interface FeedCommentRepository extends JpaRepository<FeedComment, Long> 
     Page<FeedComment> findAllByFeedFeedSeqAndUserUserSeqNotIn(Long feedSeq, Pageable page,List<Long> blockedUserSeqs);
     List<FeedComment> findAllByFeedFeedSeq(Long feedSeq);
     List<FeedComment> findTop3ByFeedFeedSeq(Long feedSeq);
+    Optional<List<FeedComment>> findByUserUserSeqAndActivatedIsTrueAndFeedActivatedIsTrueAndFeedUserUserSeq(Long userSeq, Long blockedUserSeq);
     FeedComment findOneByFeedCommentSeq(Long feedCommentSeq);
 }
