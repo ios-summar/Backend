@@ -10,5 +10,7 @@ public interface UserBlockRepository extends JpaRepository<UserBlock, Long> {
 
     Optional<UserBlock> findByUserUserSeqAndBlockedUserUserSeq(Long userSeq,Long blockedUserSeq);
 
+    boolean existsByUserUserSeqAndBlockedUserUserSeq(Long userSeq,Long blockedUserSeq);
+
     Optional<List<UserBlock>> findByUserUserSeq(Long userSeq);
 }

@@ -27,7 +27,12 @@ public class SimpleUserVO implements Serializable {
     private int follower;
     @Schema(description = "팔로잉 수")
     private int following;
+    @Schema(description = "내가 차단한 사용자 인지 여부")
+    private boolean blocked;
 
+    public void setBlocked(boolean blocked) {
+        this.blocked = blocked;
+    }
 
     public SimpleUserVO(User user){
         this.userSeq = user.getUserSeq();
@@ -39,5 +44,18 @@ public class SimpleUserVO implements Serializable {
         this.leaveYn = user.getLeaveYn();
         this.follower=user.getFollower();
         this.following=user.getFollowing();
+    }
+
+    public SimpleUserVO(User user, boolean blocked){
+        this.userSeq = user.getUserSeq();
+        this.userEmail = user.getUserEmail();
+        this.major1 = user.getMajor1();
+        this.major2 = user.getMajor2();
+        this.userNickname = user.getUserNickname();
+        this.profileImageUrl = user.getProfileImageUrl();
+        this.leaveYn = user.getLeaveYn();
+        this.follower=user.getFollower();
+        this.following=user.getFollowing();
+        this.blocked = blocked;
     }
 }

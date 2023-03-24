@@ -25,8 +25,13 @@ public interface UserRepository extends JpaRepository<User, Long>{
 
     Page<User> findByUserNicknameContainsAndLeaveYnAndUserSeqNotIn(String userNickname,boolean leaveYn ,Pageable pageable, List<Long> blockedUserSeqs);
 
+    Page<User> findByUserNicknameContainsAndLeaveYn(String userNickname,boolean leaveYn ,Pageable pageable);
+
     @Query("select u from User u where u.userNickname >=:word and u.userNickname <:word2 and u.leaveYn = false and u.userSeq not in :blockedUserSeqs")
     Page<User> searchWord(String word,String word2,Pageable pageable, List<Long> blockedUserSeqs);
+
+    @Query("select u from User u where u.userNickname >=:word and u.userNickname <:word2 and u.leaveYn = false")
+    Page<User> searchWord(String word,String word2,Pageable pageable);
 
     Optional<User> findByUserSeqAndLeaveYn(Long userSeq, boolean leaveYn);
 

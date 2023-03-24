@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -165,12 +166,20 @@ public class UserService {
     public Page<SearchUserListResponseDto> searchUserList(String userNickname, Pageable pageable) {
         //닉네임 검색 완성했을 때
         Optional<List<UserBlock>> blockedUsers = userBlockRepository.findByUserUserSeq(jwtUtil.getCurrentUserSeq());
-        List<Long> blockedUserSeqs = blockedUsers.get().stream().map(userBlock -> userBlock.getBlockedUser().getUserSeq()).collect(Collectors.toList());
         boolean searchUserListCheck = userRepository.existsByUserNicknameContainsAndLeaveYn(userNickname, false);
-        if (searchUserListCheck) {
-
-            Page<User> searchUserList = userRepository.findByUserNicknameContainsAndLeaveYnAndUserSeqNotIn(userNickname, false, pageable,blockedUserSeqs);
-            return searchUserList.map(SearchUserListResponseDto::new);
+        Page<User> searchUserList;
+        List<Long> blockedUserSeqs = new ArrayList<>();
+        if(blockedUsers.get().size()>0){
+            blockedUserSeqs = blockedUsers.get().stream().map(userBlock -> userBlock.getBlockedUser().getUserSeq()).collect(Collectors.toList());
+            if (searchUserListCheck) {
+                searchUserList = userRepository.findByUserNicknameContainsAndLeaveYnAndUserSeqNotIn(userNickname, false, pageable,blockedUserSeqs);
+                return searchUserList.map(SearchUserListResponseDto::new);
+            }
+        }else{
+            if (searchUserListCheck) {
+                searchUserList = userRepository.findByUserNicknameContainsAndLeaveYn(userNickname, false, pageable);
+                return searchUserList.map(SearchUserListResponseDto::new);
+            }
         }
         List<String> index_list = new ArrayList<>();
         index_list.add("ㄱ");
@@ -212,7 +221,12 @@ public class UserService {
                 break;
             }
         }
-        Page<User> users = userRepository.searchWord(index_map.get(num), index_map.get(num + 1), pageable,blockedUserSeqs);
+        Page<User> users = null;
+        if(blockedUsers.get().size()>0){
+            users = userRepository.searchWord(index_map.get(num), index_map.get(num + 1), pageable,blockedUserSeqs);
+        }else{
+            users = userRepository.searchWord(index_map.get(num), index_map.get(num + 1), pageable);
+        }
         return users.map(SearchUserListResponseDto::new);
     }
 
