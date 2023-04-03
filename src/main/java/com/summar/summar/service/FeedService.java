@@ -5,7 +5,6 @@ import com.summar.summar.common.SummarErrorCode;
 import com.summar.summar.domain.*;
 import com.summar.summar.dto.*;
 import com.summar.summar.enumeration.NotificationType;
-import com.summar.summar.repository.*;
 import com.summar.summar.results.repository.*;
 import com.summar.summar.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
