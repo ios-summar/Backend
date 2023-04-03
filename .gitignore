@@ -3,4 +3,4 @@
 /out/
 /target/classes
 application-h2.yml
-application.yml
+application-real.yml
