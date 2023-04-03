@@ -24,7 +24,7 @@ public class SummarApplication {
 
         SpringApplication.run(SummarApplication.class, args);
 
-        //추후 테스트
+        //추후 테스dddd
     }
 
 }
