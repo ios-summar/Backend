@@ -1,6 +1,0 @@
-
-##spring:
-##  config:
-#3#    import: optional:classpath:application-real.yml
-##server:
-##  port: 8082
