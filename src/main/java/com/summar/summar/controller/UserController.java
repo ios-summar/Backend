@@ -216,8 +216,8 @@ public class UserController {
     @Operation(summary = "회원 차단", description = "회원이 차단됩니다.", security = @SecurityRequirement(name = "Authorization"))
     @PreAuthorize("isAuthenticated()")
     @PatchMapping("/block/{blockedUserSeq}")
-    public ResponseEntity<Boolean> block(@PathVariable(value = "blockedUserSeq")Long blockedUserSeq){
-        return ResponseEntity.ok(userService.blockUser(blockedUserSeq));
+    public ResponseEntity<?> block(@PathVariable(value = "blockedUserSeq")Long blockedUserSeq){
+        return BooleanResult.build("result",userService.blockUser(blockedUserSeq));
     }
 
     /**

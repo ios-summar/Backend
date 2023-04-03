@@ -98,7 +98,10 @@ public class UserService {
     public FindUserInfoResponseDto getUserInfo(Long userSeq) {
         User user = userRepository.findByUserSeqAndLeaveYn(userSeq, false).orElseThrow(
                 () -> new SummarCommonException(SummarErrorCode.USER_NOT_FOUND.getCode(), SummarErrorCode.USER_NOT_FOUND.getMessage()));
-        return new FindUserInfoResponseDto(user.getUserSeq(), user.getUserNickname(), user.getMajor1(), user.getMajor2(), user.getIntroduce(), user.getFollower(), user.getFollowing(), user.getProfileImageUrl());
+
+        boolean blocked = userBlockRepository.existsByUserUserSeqAndBlockedUserUserSeq(jwtUtil.getCurrentUserSeq(),userSeq);
+
+        return new FindUserInfoResponseDto(user.getUserSeq(), user.getUserNickname(), user.getMajor1(), user.getMajor2(), user.getIntroduce(), user.getFollower(), user.getFollowing(), user.getProfileImageUrl(),blocked);
     }
 
     @Transactional

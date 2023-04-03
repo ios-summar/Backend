@@ -1,5 +1,6 @@
 package com.summar.summar.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Data;
 
@@ -14,8 +15,10 @@ public class FindUserInfoResponseDto {
     private Integer follower;
     private Integer following;
     private String profileImageUrl;
+    private boolean blocked;
 
-    public FindUserInfoResponseDto(Long userSeq, String userNickname, String major1, String major2, String introduce, Integer follower, Integer following,String profileImageUrl){
+
+    public FindUserInfoResponseDto(Long userSeq, String userNickname, String major1, String major2, String introduce, Integer follower, Integer following,String profileImageUrl,boolean blocked){
         this.userSeq = userSeq;
         this.userNickname = userNickname;
         this.major1 = major1;
@@ -24,5 +27,6 @@ public class FindUserInfoResponseDto {
         this.follower = follower;
         this.following = following;
         this.profileImageUrl = profileImageUrl;
+        this.blocked = blocked;
     }
 }
