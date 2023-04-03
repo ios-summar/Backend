@@ -1,4 +1,4 @@
-package com.summar.summar.repository;
+package com.summar.summar.results.repository;
 
 import com.summar.summar.domain.FeedComment;
 import com.summar.summar.domain.FeedLike;

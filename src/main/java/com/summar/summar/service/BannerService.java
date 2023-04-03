@@ -2,7 +2,7 @@ package com.summar.summar.service;
 
 import com.summar.summar.domain.Banner;
 import com.summar.summar.dto.BannerResponseDto;
-import com.summar.summar.repository.BannerRepository;
+import com.summar.summar.results.repository.BannerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

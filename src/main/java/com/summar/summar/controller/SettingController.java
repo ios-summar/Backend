@@ -2,7 +2,7 @@ package com.summar.summar.controller;
 
 import com.summar.summar.domain.Setting;
 import com.summar.summar.enumeration.SettingType;
-import com.summar.summar.repository.SettingRepository;
+import com.summar.summar.results.repository.SettingRepository;
 import com.summar.summar.results.ListResult;
 import com.summar.summar.util.StringUtil;
 import io.swagger.v3.oas.annotations.Operation;

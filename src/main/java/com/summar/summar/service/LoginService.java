@@ -1,7 +1,7 @@
 package com.summar.summar.service;
 
 import com.summar.summar.domain.User;
-import com.summar.summar.repository.UserRepository;
+import com.summar.summar.results.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
