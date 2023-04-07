@@ -13,6 +13,7 @@ import com.summar.summar.results.repository.GatheringNotificationRepository;
 import com.summar.summar.results.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -34,6 +35,7 @@ public class FollowService {
 
 
     @Transactional
+    @CacheEvict(value = "feed",allEntries = true)
     public Page<FollowerResponseDto> findFollowers(Long userSeq, Pageable pageable) {
         //해당 유저의 팔로워들 정보 추출
         //나를 팔로우하는사람들 리스트
@@ -71,6 +73,7 @@ public class FollowService {
     }
 
     @Transactional
+    @CacheEvict(value = "feed",allEntries = true)
     public void addFollower(FollowerRequestDto followerRequestDto) {
         if (followerRequestDto.getFollowedUserSeq().equals(followerRequestDto.getFollowingUserSeq())) {
             throw new NotFoundException("같을수없다");
@@ -157,6 +160,7 @@ public class FollowService {
     }
 
     @Transactional
+    @CacheEvict(value = "feed",allEntries = true)
     public void deleteFollower(FollowerRequestDto followerRequestDto) {
         User followingUser = userRepository.findByUserSeqAndLeaveYn(followerRequestDto.getFollowingUserSeq(), false).orElseThrow(() -> new SummarCommonException(SummarErrorCode.USER_NOT_FOUND.getCode(), SummarErrorCode.USER_NOT_FOUND.getMessage()));
         User followedUser = userRepository.findByUserSeqAndLeaveYn(followerRequestDto.getFollowedUserSeq(), false).orElseThrow(() -> new SummarCommonException(SummarErrorCode.USER_NOT_FOUND.getCode(), SummarErrorCode.USER_NOT_FOUND.getMessage()));
@@ -244,6 +248,7 @@ public class FollowService {
                 .build());
     }
 
+    @Transactional(readOnly = true)
     public Page<FollowerResponseDto> searchOtherFollowings(OtherFollowersCheckRequestDto otherFollowerCheckRequestDto, Pageable pageable) {
         //6
         User otherUser = userRepository.findById(otherFollowerCheckRequestDto.getOtherSeq())

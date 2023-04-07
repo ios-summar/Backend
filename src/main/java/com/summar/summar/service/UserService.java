@@ -233,6 +233,7 @@ public class UserService {
     }
 
     @Transactional
+    @CacheEvict(value = "feed",allEntries = true)
     public void changePushNotification(PushNotificationStatusDto pushNotificationStatusDto) {
         User user = userRepository.findByUserNicknameAndLeaveYn(pushNotificationStatusDto.getUserNickname(), false)
                 .orElseThrow(() -> new SummarCommonException(SummarErrorCode.USER_NOT_FOUND.getCode(), SummarErrorCode.USER_NOT_FOUND.getMessage()));
@@ -249,6 +250,7 @@ public class UserService {
     }
 
     @Transactional
+    @CacheEvict(value = "feed",allEntries = true)
     public void leaveUser(Long userSeq) {
         User userInfo = userRepository.findByUserSeqAndLeaveYn(userSeq, false)
                 .orElseThrow(() -> new SummarCommonException(SummarErrorCode.USER_NOT_FOUND.getCode(), SummarErrorCode.USER_NOT_FOUND.getMessage()));
@@ -291,6 +293,7 @@ public class UserService {
     }
 
     @Transactional
+    @CacheEvict(value = "feed",allEntries = true)
     public boolean blockUser(Long blockedUserSeq) {
         Optional<User> user = userRepository.findById(jwtUtil.getCurrentUserSeq());
         if (user.isPresent()) {

@@ -15,6 +15,7 @@ import com.summar.summar.results.repository.ReportRepository;
 import com.summar.summar.results.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +30,7 @@ public class ReportService {
     private final FeedCommentRepository feedCommentRepository;
 
     @Transactional
+    @CacheEvict(value = "feed",allEntries = true)
     public boolean insertReport(ReportRequestDto reportRequestDto) {
         User user = userRepository.findById(reportRequestDto.getMySeq())
                 .orElseThrow(() -> new SummarCommonException(SummarErrorCode.USER_NOT_FOUND.getCode(), SummarErrorCode.USER_NOT_FOUND.getMessage()));
